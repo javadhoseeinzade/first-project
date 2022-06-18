@@ -1,9 +1,9 @@
 import re
-from django.shortcuts import render, HttpResponseRedirect
+from django.shortcuts import render, HttpResponseRedirect, HttpResponse
 from django.views.generic import FormView, TemplateView
 from .forms import infoss
-from openpyxl import Workbook
-from .extentions.excel_validation import validateExel
+from .extentions.excel_validation import exel_reader
+import xlrd
 
 
 class home(TemplateView):
@@ -22,12 +22,16 @@ def get_name(request):
         form = infoss(request.POST, request.FILES)
         if form.is_valid():
             upl = form.cleaned_data['upl']
-            new_form = form.save(commit=False)
-            wb = Workbook()
-            ws = wb.active
-            ws['A1'] = "نام"      
-            new_form.save()
-            return HttpResponseRedirect('home')
+            form.save()
+            wb = xlrd.open_workbook("upload-file/" + str(upl))
+            sh = wb.sheet_by_index(0)
+            print("1----------------Ture---------------")
+            if sh.cell_value(0,0) == "نام" and sh.cell_value(0,1) == "خانوادگی" and sh.cell_value(0,2) == "کدملی":
+                print("true")
+                return HttpResponse("yes")  
+            else:
+                return HttpResponse("no")
+            #return HttpResponseRedirect('home')
     else:
         form = infoss()
 

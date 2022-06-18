@@ -1,27 +1,10 @@
-import xlsxwriter
-def validateExel(excel_file):
-    wb = xlsxwriter.Workbook('a.xlsx')
-    worksheet = wb.add_worksheet()
+import xlrd 
+from django.shortcuts import render, HttpResponse
 
-    worksheet.data_validation(
-    'A1',
-    {
-        'validate': 'str','criteria': 'between',
-        'value':'نام'
-    }
-    )
-    worksheet.data_validation(
-    'B1',
-    {
-        'validate': 'str','criteria': 'between',
-        'value':'نام خانوادگی'
-    }
-    )
-    worksheet.data_validation(
-    'C1',
-    {
-        'validate': 'str','criteria': 'between',
-        'value':'کدملی'
-    }
-    )
-    wb.close()
+def exel_reader(file_name):
+    wb = xlrd.open_workbook("upload-file/" + str(file_name))
+    sh = wb.sheet_by_index(0)
+    print("1----------------Ture---------------")
+    if sh.cell_value(0,0) == "jj":
+        print("true")
+        return HttpResponse("Hello")

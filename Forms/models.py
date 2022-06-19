@@ -6,6 +6,7 @@ class info(models.Model):
     lname = models.CharField(max_length=100)
     mobile = models.IntegerField()
     email = models.EmailField()
+    slug = models.CharField(max_length=20, unique=True, null=True)
     
     def __str__(self):
         return self.fname + " " + self.lname

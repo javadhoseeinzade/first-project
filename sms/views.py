@@ -41,11 +41,12 @@ def send_sms(request):
             sl_fi.popleft()
             fnam.popleft()
             print(recievers)
-            time.sleep(3)
+            time.sleep(1)
 
 
 
-        response = api.verify_lookup(params)
+            
+            response = api.verify_lookup(params)
         print(response)
     except APIException as e: 
         print(e)

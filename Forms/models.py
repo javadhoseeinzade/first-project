@@ -4,7 +4,7 @@ from django.db import models
 class info(models.Model):
     fname = models.CharField(max_length=100)
     lname = models.CharField(max_length=100)
-    mobile = models.IntegerField()
+    mobile = models.CharField(max_length=100)
     email = models.EmailField()
     slug = models.CharField(max_length=20, unique=True, null=True)
     

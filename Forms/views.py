@@ -1,8 +1,8 @@
-from .models import info
-import re
+from .models import info, darmanjo_form
 from django.shortcuts import render, HttpResponseRedirect, HttpResponse
-from django.views.generic import FormView, TemplateView
-from .forms import infoss
+from django.urls import reverse_lazy
+from django.views.generic import TemplateView, CreateView
+from .forms import infoss, darmanjo_formss
 from .extentions.excel_validation import exel_reader
 import xlrd
 from django.utils.crypto import get_random_string
@@ -12,6 +12,8 @@ class home(TemplateView):
     template_name = "forms/home.html"
 
 
+
+#in yek method form baraye in ast ke file excel ra daryaft konad
 def get_name(request):
     if request.method == 'POST':
         form = infoss(request.POST, request.FILES)
@@ -43,3 +45,20 @@ def get_name(request):
 
     return render(request, 'forms/form.html', {'form': form})
 
+#function form baraye form darmanjo
+
+"""def Darmanjo_Forms(request):
+    if request.method == "POST":
+        forms = darmanjo_forms(request.POST)
+        if forms.if_valid():
+"""            
+"""class Darmangar_Form(CreateView):
+    model = darmanjo_form
+    form_class = darmanjo_forms
+    template_name = "forms/detailsick.html"
+    success_url = reverse_lazy('home')"""
+
+class Darmanjo_form(CreateView):
+    model = darmanjo_form
+    fields = "__all__"
+    template_name = "forms/detailsick.html"

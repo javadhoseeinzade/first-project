@@ -1,16 +1,39 @@
-from django.shortcuts import render, get_object_or_404
+from django.shortcuts import render, get_object_or_404, HttpResponse
+from django.http import HttpResponse
 from kavenegar import *
-from Forms.models import info
+from urllib3 import HTTPResponse
+from Forms.models import darmanjo_form, info
+from Forms.forms import darmanjo_formss
 from django.views.generic import DeleteView, ListView
 from collections import deque
 import time
-class DeatailSick(DeleteView):
+"""class DeatailSick(DeleteView):
     template_name = "forms/detailsick.html"
     def get_queryset(self):
         global infoss
         slug = self.kwargs.get("slug")
         infoss = info.objects.filter(slug=slug)
-        return info.objects.filter(slug=slug)
+        return info.objects.filter(slug=slug)"""
+
+def detailsick(request, slug):
+    deta = get_object_or_404(info, slug=slug)
+    if request.method == "POST":
+        form = darmanjo_formss(request.POST)
+        if form.is_valid():
+            talk_about = form.cleaned_data['talk_about']
+            rel_info = form.cleaned_data['rel_info']
+            information = darmanjo_form.objects.create(talk_about=talk_about ,rel_info=rel_info ,information=deta)
+            form.save()
+            return HttpResponse("okey")
+        else:
+            return HttpResponse("no")
+    else:
+        form = darmanjo_formss()
+        return render(request, "forms/detailsick.html", {'deta':deta,
+                                                        'form':form,})
+
+
+
 
 def send_sms(request):
     try:

@@ -1,4 +1,137 @@
 {% extends "base.html" %}
 {% block content %}
-<center><h1>{{object.fname}} {{object.lname}} خوش آمدید</h1></center>
+
+<head>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <style>
+    body {font-family: Arial, Helvetica, sans-serif;}
+    
+    /* The Modal (background) */
+    .modal {
+      display: none; /* Hidden by default */
+      position: fixed; /* Stay in place */
+      z-index: 1; /* Sit on top */
+      padding-top: 100px; /* Location of the box */
+      left: 0;
+      top: 0;
+      width: 100%; /* Full width */
+      height: 100%; /* Full height */
+      overflow: auto; /* Enable scroll if needed */
+      background-color: rgb(0,0,0); /* Fallback color */
+      background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+    }
+    
+    /* Modal Content */
+    .modal-content {
+      background-color: #fefefe;
+      margin: auto;
+      padding: 20px;
+      border: 1px solid #888;
+      width: 80%;
+    }
+    
+    /* The Close Button */
+    .close {
+      color: #aaaaaa;
+      float: right;
+      font-size: 28px;
+      font-weight: bold;
+    }
+    
+    .close:hover,
+    .close:focus {
+      color: #000;
+      text-decoration: none;
+      cursor: pointer;
+    }
+    </style>
+
+
+    <!-- Compressed CSS -->
+    <link rel="stylesheet" href=
+"https://cdn.jsdelivr.net/npm/foundation-sites@6.7.4/dist/css/foundation.min.css">
+    
+    <!-- Compressed JavaScript -->
+    <script src=
+"https://cdnjs.cloudflare.com/ajax/libs/foundation/6.0.1/js/vendor/jquery.min.js">
+    </script>
+    <script src=
+"https://cdn.jsdelivr.net/npm/foundation-sites@6.5.1/dist/js/foundation.min.js">
+    </script>
+</head>
+<body>
+    
+
+<center><h1>{{deta.fname}} {{deta.lname}} خوش آمدید</h1>
+<form method="post">
+    <p>لطفا مشکل خود را برای هلسی بنویسید</p>
+    {% csrf_token %}
+    {{ form.talk_about }}
+ 
+    <button id="myBtn">Open Modal</button>
+
+    <!-- The Modal -->
+    <div id="myModal" class="modal">
+    
+      <!-- Modal content -->
+      <div class="modal-content">
+        <span class="close">&times;</span>
+        {{form.rel_info}}
+        <button type="submit" class="btn btn-primary">Add Project</button>
+
+      </div>
+      
+      <div id="myModal" class="modal">
+    
+        <!-- Modal content -->
+        <div class="modal-content">
+          <span class="close">&times;</span>
+            <p>sanj</p>
+        </div>
+        
+      
+      </div>
+    </div>
+    <button class="button" 
+    data-open="modal1">
+Reveal first modal</button>
+    <div class="reveal" 
+    id="modal1" 
+    data-reveal>
+   <strong>Modal 1</strong> <br>
+   {{form.rel_info}}
+
+   <button class="button" 
+           data-open="modal2">
+     Reveal second modal
+   </button>
+   <button class="close-button" 
+           data-close type="button">
+       <span aria-hidden="true">×</span>
+   </button>
+</div>
+
+<div class="reveal" id="modal2" data-reveal>
+   <h2>This is Modal 2</h2>
+     
+<p>With the idea of imparting programming 
+      knowledge, Mr. Sandeep Jain, an IIT 
+      Roorkee alumnus started a dream, GeeksforGeeks</p>
+
+   <button class="close-button" 
+           data-close
+           type="button">
+       <span aria-hidden="true">×</span>
+   </button>
+</div>
+
+</form>
+
+</center>
+<script>
+    $(document).ready(function () {
+        $(document).foundation();
+    })
+</script>
+</body>
 {% endblock %}

@@ -1,5 +1,6 @@
-from .models import info, darmanjo_form
-from django.shortcuts import render, HttpResponseRedirect, HttpResponse
+from .models import darmangar, info, darmanjo_form
+from django.core.paginator import Paginator
+from django.shortcuts import render, HttpResponseRedirect, HttpResponse, get_object_or_404, get_list_or_404
 from django.urls import reverse_lazy
 from django.views.generic import TemplateView, CreateView
 from .forms import infoss, darmanjo_formss
@@ -45,20 +46,32 @@ def get_name(request):
 
     return render(request, 'forms/form.html', {'form': form})
 
+
 #function form baraye form darmanjo
+def detailsick(request, slug):
+    deta = get_object_or_404(info, slug=slug)
+    print(deta)
+    darm = get_list_or_404(darmangar)
+    paginator = Paginator(darm, 1)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+    page_objw = page_obj.object_list
+    for darmangar_obje in page_objw:
+        print(darmangar_obje)
 
-"""def Darmanjo_Forms(request):
     if request.method == "POST":
-        forms = darmanjo_forms(request.POST)
-        if forms.if_valid():
-"""            
-"""class Darmangar_Form(CreateView):
-    model = darmanjo_form
-    form_class = darmanjo_forms
-    template_name = "forms/detailsick.html"
-    success_url = reverse_lazy('home')"""
-
-class Darmanjo_form(CreateView):
-    model = darmanjo_form
-    fields = "__all__"
-    template_name = "forms/detailsick.html"
+        form = darmanjo_formss(request.POST)
+        if form.is_valid():
+            talk_about = form.cleaned_data['talk_about']
+            rel_info = form.cleaned_data['rel_info']
+            information = darmanjo_form.objects.create(talk_about=talk_about ,rel_info=darmangar_obje ,information=deta)
+            form.save()
+            return HttpResponse("okey")
+        else:
+            return HttpResponse("no")
+    else:
+        form = darmanjo_formss()
+        return render(request, "forms/detailsick.html", {'deta':deta,
+                                                        'form':form,
+                                                        'darm':darm,
+                                                        'page_obj':page_obj})

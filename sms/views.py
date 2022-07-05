@@ -15,7 +15,7 @@ import time
         infoss = info.objects.filter(slug=slug)
         return info.objects.filter(slug=slug)"""
 
-def detailsick(request, slug):
+"""def detailsick(request, slug):
     deta = get_object_or_404(info, slug=slug)
     if request.method == "POST":
         form = darmanjo_formss(request.POST)
@@ -31,7 +31,7 @@ def detailsick(request, slug):
         form = darmanjo_formss()
         return render(request, "forms/detailsick.html", {'deta':deta,
                                                         'form':form,})
-
+"""
 
 
 

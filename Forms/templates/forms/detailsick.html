@@ -44,6 +44,84 @@
       text-decoration: none;
       cursor: pointer;
     }
+
+
+
+
+
+    .popup {
+  background-color: #000000a6;
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 1000;
+  /* 	display: flex; */
+  display: none;
+  align-items: center;
+  justify-content: center;
+}
+.popup-content {
+  display: none;
+  max-width: 800px;
+  width: 100%;
+  background: #fff;
+  min-height: 400px;
+  overflow: auto;
+  position: relative;
+  padding: 35px;
+  margin: 0 15px;
+  box-sizing: border-box;
+  transition: 0.3s ease;
+}
+.popup-content .close {
+  position: absolute;
+  right: 5px;
+  top: 5px;
+  cursor: pointer;
+}
+body.showPopup .popup {
+  display: flex;
+}
+body.showPopup .popup-content {
+  display: block;
+  animation: popup 0.3s forwards;
+}
+body.removePopup .popup-content {
+  animation: popupclose 0.3s forwards !important;
+}
+
+@keyframes popup {
+  0% {
+    transform: scale(0.9);
+    opacity: 0.5;
+  }
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+@keyframes popupclose {
+  0% {
+    transform: scale(1);
+    opacity: 1;
+  }
+  100% {
+    transform: scale(0.9);
+    opacity: 0.5;
+  }
+}
+
+/* button */
+.open-btn {
+  background-color: red;
+  color: #fff;
+  display: inline-block;
+  padding: 12px 24px;
+  border-radius: 24px;
+  cursor: pointer;
+}
     </style>
 
 
@@ -63,68 +141,39 @@
     
 
 <center><h1>{{deta.fname}} {{deta.lname}} خوش آمدید</h1>
+
+
 <form method="post">
     <p>لطفا مشکل خود را برای هلسی بنویسید</p>
     {% csrf_token %}
+    
+    
     {{ form.talk_about }}
- 
-    <button id="myBtn">Open Modal</button>
-
-    <!-- The Modal -->
-    <div id="myModal" class="modal">
-    
-      <!-- Modal content -->
-      <div class="modal-content">
-        <span class="close">&times;</span>
-        {{form.rel_info}}
-        <button type="submit" class="btn btn-primary">Add Project</button>
-
-      </div>
-      
-      <div id="myModal" class="modal">
-    
-        <!-- Modal content -->
-        <div class="modal-content">
-          <span class="close">&times;</span>
-            <p>sanj</p>
+    <div class="popup">
+        <div class="popup-content">
+          <img src="https://sudip-bhowmick.github.io/images/img/close.svg" alt="close" class="close">
+          <div>
+            {% if page_obj.has_previous %}
+            <a href="?page=1">&laquo;</a>
+            <a href="?page={{ page_obj.previous_page_number }}">قبلی</a>
+        {% endif %}
+            {% for i in page_obj  %}
+            <p>{{i.fname}} {{i.lname}}</p>
+            <p>{{i.description}}</p>
+            <img src="{{i.pic.url}}" alt="" width="400" height="400">
+            {% endfor %}
+            <!-- The Modal -->
+            {% if page_obj.has_next %}
+            <a href="?page={{ page_obj.next_page_number }}">بعدی</a>
+            {% endif %}
+            <br>
+            <br>
+            <input type="submit" value="انتخاب">
+          </div>
         </div>
-        
-      
       </div>
-    </div>
-    <button class="button" 
-    data-open="modal1">
-Reveal first modal</button>
-    <div class="reveal" 
-    id="modal1" 
-    data-reveal>
-   <strong>Modal 1</strong> <br>
-   {{form.rel_info}}
 
-   <button class="button" 
-           data-open="modal2">
-     Reveal second modal
-   </button>
-   <button class="close-button" 
-           data-close type="button">
-       <span aria-hidden="true">×</span>
-   </button>
-</div>
-
-<div class="reveal" id="modal2" data-reveal>
-   <h2>This is Modal 2</h2>
-     
-<p>With the idea of imparting programming 
-      knowledge, Mr. Sandeep Jain, an IIT 
-      Roorkee alumnus started a dream, GeeksforGeeks</p>
-
-   <button class="close-button" 
-           data-close
-           type="button">
-       <span aria-hidden="true">×</span>
-   </button>
-</div>
-
+      <div class="open-btn" onclick="openPopup()">ادامه</div>
 </form>
 
 </center>
@@ -132,6 +181,35 @@ Reveal first modal</button>
     $(document).ready(function () {
         $(document).foundation();
     })
+
+
+
+    function openPopup() {
+  $("body").addClass("showPopup");
+}
+function closePopup() {
+  $("body").removeClass("showPopup removePopup");
+}
+function closePopupScreen() {
+  $("body").addClass("removePopup");
+  setTimeout(closePopup, 200);
+}
+
+$(".popup .close").on("click", function () {
+  closePopupScreen();
+});
+
+// auto open popup
+openPopup();
+// setTimeout(openPopup, 1000);
+
+// close popup
+$(document).keyup(function (e) {
+  if (e.key === "Escape") {
+    closePopup();
+  }
+});
+
 </script>
 </body>
 {% endblock %}

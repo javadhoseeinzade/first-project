@@ -1,12 +1,20 @@
 from distutils.command.upload import upload
+from secrets import choice
 from django.db import models
 
 class darmangar(models.Model):
+    choics = [
+        ("طلاق","طلاق"),
+        ("فرزند","فرزند"),
+        ("خانواده","خانواده"),
+    ]
+    keyword = models.CharField(max_length=20, choices=choics, default=1)
     fname = models.CharField(max_length=100)
     slug = models.SlugField(max_length=100, null=True, unique=True )
     lname = models.CharField(max_length=100)
     description = models.TextField()
     pic = models.ImageField(upload_to="darmanger-image")
+
 
     def __str__(self):
         return self.fname + " " + self.lname 

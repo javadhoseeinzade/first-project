@@ -1,4 +1,4 @@
-from .models import darmangar, info, darmanjo_form
+from .models import darmangar, info, darmanjo_form, keywords
 from django.core.paginator import Paginator
 from django.shortcuts import render, HttpResponseRedirect, HttpResponse, get_object_or_404, get_list_or_404
 from django.urls import reverse_lazy
@@ -50,19 +50,26 @@ def get_name(request):
 #function form baraye form darmanjo
 def detailsick(request, slug):
     deta = get_object_or_404(info, slug=slug)
-    print(deta)
+
+    #pagination
     darm = get_list_or_404(darmangar)
     paginator = Paginator(darm, 1)
     page_number = request.GET.get('page')
     page_obj = paginator.get_page(page_number)
+
+    #get page object
     page_objw = page_obj.object_list
     for darmangar_obje in page_objw:
         print(darmangar_obje)
 
+    #form
     if request.method == "POST":
         form = darmanjo_formss(request.POST)
         if form.is_valid():
+            form.save(commit=False)
             talk_about = form.cleaned_data['talk_about']
+            phrase_to_list = talk_about.split()
+            print(phrase_to_list)
             rel_info = form.cleaned_data['rel_info']
             information = darmanjo_form.objects.create(talk_about=talk_about ,rel_info=darmangar_obje ,information=deta)
             form.save()

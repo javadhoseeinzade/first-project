@@ -50,35 +50,54 @@ def get_name(request):
 #function form baraye form darmanjo
 def detailsick(request, slug):
     deta = get_object_or_404(info, slug=slug)
-
     #pagination
-    darm = get_list_or_404(darmangar)
-    paginator = Paginator(darm, 1)
-    page_number = request.GET.get('page')
-    page_obj = paginator.get_page(page_number)
-
+    #darm = get_list_or_404(darmangar)
+    #paginator = Paginator(darm, 1)
+    #page_number = request.GET.get('page')
+    #page_obj = paginator.get_page(page_number)
     #get page object
-    page_objw = page_obj.object_list
-    for darmangar_obje in page_objw:
-        print(darmangar_obje)
-
+    #page_objw = page_obj.object_list
+    #for darmangar_obje in page_objw:
+       #print(darmangar_obje)
     #form
+    darm = None
+    page_obj = None
+    darmangar_obje = None
     if request.method == "POST":
         form = darmanjo_formss(request.POST)
+    #    talk_about =  request.POST.get("talk_about")
+    #    print(talk_about)
+    #    darm = darmangar.objects.filter(keyword__in=talk_about.split())
+    #    print(darm)
+    #    paginator = Paginator(darm, 1)
+    #    page_number = request.GET.get('page')
+    #    page_obj = paginator.get_page(page_number)
+    #            #get page object
+    #    page_objw = page_obj.object_list
+    #    for darmangar_obje in page_objw:
+    #        print(darmangar_obje)
         if form.is_valid():
             form.save(commit=False)
             talk_about = form.cleaned_data['talk_about']
-            phrase_to_list = talk_about.split()
-            print(phrase_to_list)
+            print(talk_about)
+            darm = darmangar.objects.filter(keyword__in=talk_about.split())
+            print(darm)
+            paginator = Paginator(darm, 1)
+            page_number = request.GET.get('page')
+            page_obj = paginator.get_page(page_number)
+                #get page object
+            page_objw = page_obj.object_list
+            for darmangar_obje in page_objw:
+                print(darmangar_obje)
             rel_info = form.cleaned_data['rel_info']
             information = darmanjo_form.objects.create(talk_about=talk_about ,rel_info=darmangar_obje ,information=deta)
             form.save()
-            return HttpResponse("okey")
-        else:
-            return HttpResponse("no")
+            success = "okeyaa"
+            return HttpResponse(success)
     else:
         form = darmanjo_formss()
-        return render(request, "forms/detailsick.html", {'deta':deta,
+        return render(request, "forms/detailsick.html", {                                                        
+                                                        'deta':deta,
                                                         'form':form,
                                                         'darm':darm,
                                                         'page_obj':page_obj})

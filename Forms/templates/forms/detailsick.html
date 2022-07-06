@@ -146,9 +146,10 @@ body.removePopup .popup-content {
 <form method="post">
     <p>لطفا مشکل خود را برای هلسی بنویسید</p>
     {% csrf_token %}
-    
-    
-    {{ form.talk_about }}
+    <h2></h2>
+    <input type="text" id="talk_about" name="talk_about">    
+    <input type="submit">
+
     <div class="popup">
         <div class="popup-content">
           <img src="https://sudip-bhowmick.github.io/images/img/close.svg" alt="close" class="close">
@@ -178,11 +179,9 @@ body.removePopup .popup-content {
 
 </center>
 <script>
-    $(document).ready(function () {
-        $(document).foundation();
-    })
-
-
+  function myFunction() {
+  document.getElementById("myForm").submit();
+}
 
     function openPopup() {
   $("body").addClass("showPopup");
@@ -209,7 +208,6 @@ $(document).keyup(function (e) {
     closePopup();
   }
 });
-
 </script>
 </body>
 {% endblock %}

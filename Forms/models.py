@@ -1,5 +1,3 @@
-from distutils.command.upload import upload
-from secrets import choice
 from django.db import models
 
 class darmangar(models.Model):
@@ -36,6 +34,7 @@ class UploadFile(models.Model):
     upl = models.FileField(upload_to="upload-file")
 
 
+
 class darmanjo_form(models.Model):
     talk_about = models.TextField(null=True, blank=True)
     information = models.ForeignKey(info, on_delete=models.CASCADE,null=True)
@@ -44,9 +43,12 @@ class darmanjo_form(models.Model):
     def __str__(self):
         return self.talk_about
 
-class keywords(models.Model):
-    key = models.CharField(max_length=100)
-    darmangar_fi = models.ManyToManyField(darmangar)
-
-    def __str__(self):
-        return self.key
+class Choice_Model(models.Model):
+    choics = [
+        ("طلاق","طلاق"),
+        ("فرزند","فرزند"),
+        ("خانواده","خانواده"),
+    ]
+    keyword = models.CharField(max_length=20, choices=choics, default=1)
+    information = models.ForeignKey(info, on_delete=models.CASCADE,null=True)
+    sessions = models.CharField(max_length=200)

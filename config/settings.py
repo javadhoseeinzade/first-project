@@ -39,6 +39,7 @@ INSTALLED_APPS = [
     'django.contrib.staticfiles',
     'Forms.apps.FormsConfig',
     'sms.apps.SmsConfig',
+    'formtools',
 ]
 
 MIDDLEWARE = [

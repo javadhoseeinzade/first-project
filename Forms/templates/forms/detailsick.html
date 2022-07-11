@@ -138,25 +138,22 @@ body.removePopup .popup-content {
     </script>
 </head>
 <body>
-    
-
 <center><h1>{{deta.fname}} {{deta.lname}} خوش آمدید</h1>
 
-
-<form method="post">
-    <p>لطفا مشکل خود را برای هلسی بنویسید</p>
-    {% csrf_token %}
-    <h2></h2>
-    <input type="text" id="talk_about" name="talk_about">    
-    <input type="submit">
-
-    <div class="popup">
-        <div class="popup-content">
-          <img src="https://sudip-bhowmick.github.io/images/img/close.svg" alt="close" class="close">
+  <!DOCTYPE html>
+  <html>
+  <head>
+      <title>Todo List</title>
+  </head>
+  <body>
+      <form method="post" id="task-form">
+          {% csrf_token %}
+          {{form.talk_about}}
+          <button type="submit">جست و جو</button>
           <div>
             {% if page_obj.has_previous %}
             <a href="?page=1">&laquo;</a>
-            <a href="?page={{ page_obj.previous_page_number }}">قبلی</a>
+            <a href="?page={{ page_obj.previous_page_number }}" type="button">قبلی</a>
         {% endif %}
             {% for i in page_obj  %}
             <p>{{i.fname}} {{i.lname}}</p>
@@ -167,47 +164,11 @@ body.removePopup .popup-content {
             {% if page_obj.has_next %}
             <a href="?page={{ page_obj.next_page_number }}">بعدی</a>
             {% endif %}
-            <br>
-            <br>
-            <input type="submit" value="انتخاب">
           </div>
-        </div>
-      </div>
-
-      <div class="open-btn" onclick="openPopup()">ادامه</div>
-</form>
-
+        {{form.rel_info}}
+      </form>
+  </body>
+  </html>
 </center>
-<script>
-  function myFunction() {
-  document.getElementById("myForm").submit();
-}
-
-    function openPopup() {
-  $("body").addClass("showPopup");
-}
-function closePopup() {
-  $("body").removeClass("showPopup removePopup");
-}
-function closePopupScreen() {
-  $("body").addClass("removePopup");
-  setTimeout(closePopup, 200);
-}
-
-$(".popup .close").on("click", function () {
-  closePopupScreen();
-});
-
-// auto open popup
-openPopup();
-// setTimeout(openPopup, 1000);
-
-// close popup
-$(document).keyup(function (e) {
-  if (e.key === "Escape") {
-    closePopup();
-  }
-});
-</script>
 </body>
 {% endblock %}

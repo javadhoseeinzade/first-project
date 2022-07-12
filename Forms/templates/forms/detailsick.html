@@ -4,123 +4,16 @@
 <head>
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <style>
-    body {font-family: Arial, Helvetica, sans-serif;}
-    
-    /* The Modal (background) */
-    .modal {
-      display: none; /* Hidden by default */
-      position: fixed; /* Stay in place */
-      z-index: 1; /* Sit on top */
-      padding-top: 100px; /* Location of the box */
-      left: 0;
-      top: 0;
-      width: 100%; /* Full width */
-      height: 100%; /* Full height */
-      overflow: auto; /* Enable scroll if needed */
-      background-color: rgb(0,0,0); /* Fallback color */
-      background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
-    }
-    
-    /* Modal Content */
-    .modal-content {
-      background-color: #fefefe;
-      margin: auto;
-      padding: 20px;
-      border: 1px solid #888;
-      width: 80%;
-    }
-    
-    /* The Close Button */
-    .close {
-      color: #aaaaaa;
-      float: right;
-      font-size: 28px;
-      font-weight: bold;
-    }
-    
-    .close:hover,
-    .close:focus {
-      color: #000;
-      text-decoration: none;
-      cursor: pointer;
-    }
 
-
-
-
-
-    .popup {
-  background-color: #000000a6;
-  position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  z-index: 1000;
-  /* 	display: flex; */
-  display: none;
-  align-items: center;
-  justify-content: center;
-}
-.popup-content {
-  display: none;
-  max-width: 800px;
-  width: 100%;
-  background: #fff;
-  min-height: 400px;
-  overflow: auto;
-  position: relative;
-  padding: 35px;
-  margin: 0 15px;
-  box-sizing: border-box;
-  transition: 0.3s ease;
-}
-.popup-content .close {
-  position: absolute;
-  right: 5px;
-  top: 5px;
-  cursor: pointer;
-}
-body.showPopup .popup {
-  display: flex;
-}
-body.showPopup .popup-content {
-  display: block;
-  animation: popup 0.3s forwards;
-}
-body.removePopup .popup-content {
-  animation: popupclose 0.3s forwards !important;
-}
-
-@keyframes popup {
-  0% {
-    transform: scale(0.9);
-    opacity: 0.5;
-  }
-  100% {
-    transform: scale(1);
-    opacity: 1;
-  }
-}
-@keyframes popupclose {
-  0% {
-    transform: scale(1);
-    opacity: 1;
-  }
-  100% {
-    transform: scale(0.9);
-    opacity: 0.5;
-  }
-}
-
-/* button */
-.open-btn {
-  background-color: red;
-  color: #fff;
+.button {
+  background-color: #219354; /* Green */
+  border: none;
+  color: white;
+  padding: 15px 32px;
+  text-align: center;
+  text-decoration: none;
   display: inline-block;
-  padding: 12px 24px;
-  border-radius: 24px;
-  cursor: pointer;
+  font-size: 16px;
 }
     </style>
 
@@ -149,23 +42,14 @@ body.removePopup .popup-content {
       <form method="post" id="task-form">
           {% csrf_token %}
           {{form.talk_about}}
-          <button type="submit">جست و جو</button>
-          <div>
-            {% if page_obj.has_previous %}
-            <a href="?page=1">&laquo;</a>
-            <a href="?page={{ page_obj.previous_page_number }}" type="button">قبلی</a>
-        {% endif %}
-            {% for i in page_obj  %}
-            <p>{{i.fname}} {{i.lname}}</p>
-            <p>{{i.description}}</p>
-            <img src="{{i.pic.url}}" alt="" width="400" height="400">
-            {% endfor %}
-            <!-- The Modal -->
-            {% if page_obj.has_next %}
-            <a href="?page={{ page_obj.next_page_number }}">بعدی</a>
-            {% endif %}
-          </div>
-        {{form.rel_info}}
+          <button class="button" type="submit">جست و جو دکتر</button>
+          {% for i in darm %}
+          <p>{{i.fname}} {{i.lname}}</p>
+          <p>{{i.description}}</p>
+           <img src="{{i.pic.url}}" alt="" width="400" height="400">
+          <a href="{% url 'form:details' i.slug %}" <button class="button" type="submit" value="{{ i.id }}">جست و جو دکتر</button></a>
+           {% endfor %}
+           {{form.rel_info}}
       </form>
   </body>
   </html>

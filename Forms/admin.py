@@ -4,5 +4,7 @@ from .models import UploadFile, info,darmangar ,darmanjo_form,Choice_Model
 admin.site.register(info)
 admin.site.register(UploadFile)
 admin.site.register(darmangar)
-admin.site.register(darmanjo_form)
+class darmanjoform(admin.ModelAdmin):
+    list_display = ['talk_about', 'rel_info']
+admin.site.register(darmanjo_form, darmanjoform)
 admin.site.register(Choice_Model)

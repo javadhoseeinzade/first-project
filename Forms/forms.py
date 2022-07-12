@@ -1,4 +1,6 @@
 from django import forms
+from django.db import models
+
 from django.forms import ModelForm
 from .models import UploadFile, info, darmanjo_form, darmangar, Choice_Model
 
@@ -11,8 +13,11 @@ class darmanjo_formss(ModelForm):
     class Meta:
         model = darmanjo_form
         fields = ['talk_about', 'rel_info']
+
 class darmanjo_F(ModelForm):
     class Meta:
         model = darmangar
         fields = ['keyword']
 
+    #rel_info = forms.ModelMultipleChoiceField(
+        #queryset=darmangar.objects.all(), widget=forms.CheckboxSelectMultiple)

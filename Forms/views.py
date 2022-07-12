@@ -2,7 +2,7 @@ from .models import Choice_Model, darmangar, info, darmanjo_form
 from django.core.paginator import Paginator
 from django.shortcuts import render, HttpResponseRedirect, HttpResponse, get_object_or_404, get_list_or_404, redirect
 from django.urls import reverse_lazy
-from django.views.generic import TemplateView, CreateView,FormView
+from django.views.generic import TemplateView, CreateView,FormView, DetailView
 from .forms import infoss, darmanjo_formss, darmanjo_F
 from .extentions.excel_validation import exel_reader
 import xlrd
@@ -47,33 +47,69 @@ def get_name(request):
     return render(request, 'forms/form.html', {'form': form})
 
 
+class Detail(FormView):
+
+    template_name = "forms/detail.html"
+    form_class = darmanjo_formss
+    template_name = "forms/detail.html"
+
+    def form_valid(self, form, slug,*args, **kwargs):
+        pk = self.kwargs.get("pk")
+        talk_about = form.cleaned_data['talk_about']
+        deta = get_object_or_404(info, slug=slug)
+        print(deta)
+        darm = darmangar.objects.filter(keyword__in=talk_about.split())
+        new = darmanjo_form.objects.create(
+            talk_about =form.cleaned_data['talk_about'],
+            rel_info = darmangar.objects.get(pk=2),
+            )
+
+        form.save(commit = False)
+        return super(Detail, self).form_valid(form)
+
+
 #function form baraye form darmanjo
 def detailsick(request, slug):
     deta = get_object_or_404(info, slug=slug)
     darm = None
     page_obj = None
+    id = None
     darmangar_obje = None
+    rel_info = None
     #form
     if request.method == "POST":
         form = darmanjo_formss(request.POST)
-
+        a = request.POST
         if form.is_valid():
+            rel_info = form.cleaned_data['rel_info']
             talk_about = form.cleaned_data['talk_about']
-
+            print("aa"+str(rel_info))
             darm = darmangar.objects.filter(keyword__in=talk_about.split())
             print(darm)
-            #pagination
-            paginator = Paginator(darm, 1)
-            page_number = request.GET.get('page')
-            page_obj = paginator.get_page(page_number)
-            #get page object
-            page_objw = page_obj.object_list
-            rel_info = form.cleaned_data['rel_info']
-            for darmangar_obje in page_objw:
-                print(darmangar_obje)
-            information = darmanjo_form.objects.create(talk_about=talk_about ,rel_info=rel_info ,information=deta)
+            pk = form.cleaned_data.get("pk")
+            informations = darmanjo_form.objects.create(talk_about=talk_about,information=deta)
             form.save()
     else:
         form = darmanjo_formss()
     return render(request, "forms/detailsick.html", {'deta':deta,'form':form,'darm':darm,'page_obj':page_obj})
+"""
+def detailview(request, slug):
+    darm = darmangar.objects.filter(slug=slug)
 
+    return render(request, "forms/detailview.html", {'darm':darm})
+"""
+
+class detailview(DetailView):
+    template_name = "forms/detailview.html"
+
+    def get_queryset(self):
+        global detail
+        slug = self.kwargs.get("slug")
+        detail = get_object_or_404(darmangar, slug=slug)
+        return darmangar.objects.filter(slug=slug)
+
+    def get_context_data(self, **kwargs):
+        context =  super().get_context_data(**kwargs)
+        context["detail"] = detail
+        return context
+    

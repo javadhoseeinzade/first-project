@@ -1,3 +1,4 @@
+from webbrowser import get
 from .models import Choice_Model, darmangar, info, darmanjo_form
 from django.core.paginator import Paginator
 from django.shortcuts import render, HttpResponseRedirect, HttpResponse, get_object_or_404, get_list_or_404, redirect
@@ -47,17 +48,24 @@ def get_name(request):
     return render(request, 'forms/form.html', {'form': form})
 
 
-class Detail(FormView):
+class Detail(FormView, DetailView):
 
     template_name = "forms/detail.html"
     form_class = darmanjo_formss
-    template_name = "forms/detail.html"
+    def get_queryset(self):
+        global detail
+        slug = self.kwargs.get("slug")
+        detail = get_object_or_404(info, slug=slug)
+        return info.objects.filter(slug=slug)
 
-    def form_valid(self, form, slug,*args, **kwargs):
+    def get_context_data(self, **kwargs):
+        context =  super().get_context_data(**kwargs)
+        context["detail"] = detail
+        return context
+
+    def form_valid(self, form,*args, **kwargs):
         pk = self.kwargs.get("pk")
         talk_about = form.cleaned_data['talk_about']
-        deta = get_object_or_404(info, slug=slug)
-        print(deta)
         darm = darmangar.objects.filter(keyword__in=talk_about.split())
         new = darmanjo_form.objects.create(
             talk_about =form.cleaned_data['talk_about'],
@@ -67,7 +75,45 @@ class Detail(FormView):
         form.save(commit = False)
         return super(Detail, self).form_valid(form)
 
+class detailview(DetailView, FormView):
+    template_name = "forms/detailview.html"
+    form_class = darmanjo_formss
+    def get_queryset(self):
+        global detail
+        slug = self.kwargs.get("slug")
+        detail = get_object_or_404(darmangar, slug=slug)
+        return darmangar.objects.filter(slug=slug)
 
+    def get_context_data(self, **kwargs):
+        context =  super().get_context_data(**kwargs)
+        context["detail"] = detail
+        return context
+
+
+    def get_queryset(self):
+        global details
+        pk = self.kwargs.get("pk")
+        details = get_object_or_404(darmangar, pk=pk)
+        return darmangar.objects.filter(pk=pk)
+
+    def get_context_data(self, **kwargs):
+        context =  super().get_context_data(**kwargs)
+        context["details"] = details
+        return context
+    
+
+    def form_valid(self, form, *args, **kwargs):
+        slug = self.kwargs.get("slug")
+        pk = self.kwargs.get("pk")
+        a = get_object_or_404(darmangar, slug=slug)
+        b = get_object_or_404(info, pk=pk)
+        new = darmanjo_form.objects.create(
+            rel_info = a,
+            information = b,
+            talk_about = str(b)
+            )
+
+        return super(detailview, self).form_valid(form)
 #function form baraye form darmanjo
 def detailsick(request, slug):
     deta = get_object_or_404(info, slug=slug)
@@ -81,7 +127,6 @@ def detailsick(request, slug):
         form = darmanjo_formss(request.POST)
         a = request.POST
         if form.is_valid():
-            rel_info = form.cleaned_data['rel_info']
             talk_about = form.cleaned_data['talk_about']
             print("aa"+str(rel_info))
             darm = darmangar.objects.filter(keyword__in=talk_about.split())
@@ -92,6 +137,8 @@ def detailsick(request, slug):
     else:
         form = darmanjo_formss()
     return render(request, "forms/detailsick.html", {'deta':deta,'form':form,'darm':darm,'page_obj':page_obj})
+
+
 """
 def detailview(request, slug):
     darm = darmangar.objects.filter(slug=slug)
@@ -99,17 +146,5 @@ def detailview(request, slug):
     return render(request, "forms/detailview.html", {'darm':darm})
 """
 
-class detailview(DetailView):
-    template_name = "forms/detailview.html"
 
-    def get_queryset(self):
-        global detail
-        slug = self.kwargs.get("slug")
-        detail = get_object_or_404(darmangar, slug=slug)
-        return darmangar.objects.filter(slug=slug)
-
-    def get_context_data(self, **kwargs):
-        context =  super().get_context_data(**kwargs)
-        context["detail"] = detail
-        return context
     

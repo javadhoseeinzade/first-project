@@ -47,7 +47,7 @@
           <p>{{i.fname}} {{i.lname}}</p>
           <p>{{i.description}}</p>
            <img src="{{i.pic.url}}" alt="" width="400" height="400">
-          <a href="{% url 'form:details' i.slug %}" <button class="button" type="submit" value="{{ i.id }}">جست و جو دکتر</button></a>
+          <a href="{% url 'form:details' i.slug deta.pk %}" <button class="button" type="submit" value="{{ i.id }}">جست و جو دکتر</button></a>
            {% endfor %}
            {{form.rel_info}}
       </form>

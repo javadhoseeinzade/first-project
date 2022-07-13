@@ -1,2 +1,6 @@
-aa
-{{detail.fname}}
+{{detail.fname}} <br>
+<form method="post" enctype="multipart/form-data">
+    {% csrf_token %}
+    {{ form.rel_info }}
+    <input type="submit" value="Submit">
+</form>

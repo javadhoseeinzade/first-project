@@ -7,6 +7,6 @@ urlpatterns = [
     path("fomes", get_name, name="formviews"),
     path("<slug:slug>/", detailsick, name="h"),
     path("a/<slug:slug>/", Detail.as_view(), name="detail"),
-    path("b/<slug:slug>/", detailview.as_view(), name="details"),
+    path("b/<slug:slug>/<int:pk>", detailview.as_view(), name="details"),
 
 ]

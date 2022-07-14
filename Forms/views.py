@@ -48,36 +48,15 @@ def get_name(request):
     return render(request, 'forms/form.html', {'form': form})
 
 
-class Detail(FormView, DetailView):
 
-    template_name = "forms/detail.html"
-    form_class = darmanjo_formss
-    def get_queryset(self):
-        global detail
-        slug = self.kwargs.get("slug")
-        detail = get_object_or_404(info, slug=slug)
-        return info.objects.filter(slug=slug)
-
-    def get_context_data(self, **kwargs):
-        context =  super().get_context_data(**kwargs)
-        context["detail"] = detail
-        return context
-
-    def form_valid(self, form,*args, **kwargs):
-        pk = self.kwargs.get("pk")
-        talk_about = form.cleaned_data['talk_about']
-        darm = darmangar.objects.filter(keyword__in=talk_about.split())
-        new = darmanjo_form.objects.create(
-            talk_about =form.cleaned_data['talk_about'],
-            rel_info = darmangar.objects.get(pk=2),
-            )
-
-        form.save(commit = False)
-        return super(Detail, self).form_valid(form)
+class Submit_Form(TemplateView):
+    template_name = "forms/submit.html"
 
 class detailview(DetailView, FormView):
     template_name = "forms/detailview.html"
+    success_url = reverse_lazy('form:submit')
     form_class = darmanjo_formss
+    
     def get_queryset(self):
         global detail
         slug = self.kwargs.get("slug")
@@ -137,14 +116,3 @@ def detailsick(request, slug):
     else:
         form = darmanjo_formss()
     return render(request, "forms/detailsick.html", {'deta':deta,'form':form,'darm':darm,'page_obj':page_obj})
-
-
-"""
-def detailview(request, slug):
-    darm = darmangar.objects.filter(slug=slug)
-
-    return render(request, "forms/detailview.html", {'darm':darm})
-"""
-
-
-    

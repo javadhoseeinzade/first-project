@@ -1,6 +1,22 @@
-{{detail.fname}} <br>
+<style>
+
+    .button {
+      background-color: #219354; /* Green */
+      border: none;
+      color: white;
+      padding: 15px 32px;
+      text-align: center;
+      text-decoration: none;
+      display: inline-block;
+      font-size: 16px;
+    }
+        </style>
+<center>
+<h1> دکتر {{details.fname}} 
+{{details.lname}}</h1> <br>
+<h3>:توضیحات دکتر</h3> {{details.description}}<br><br>
 <form method="post" enctype="multipart/form-data">
     {% csrf_token %}
-    {{ form.rel_info }}
-    <input type="submit" value="Submit">
+    <input type="submit" class="button" value="ثبت فرم">
 </form>
+</center>

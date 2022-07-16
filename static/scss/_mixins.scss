@@ -1,0 +1,20 @@
+@mixin centerd {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+@mixin inline_centerd {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+@mixin space-b {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+} 
+@mixin icon_style ($iwidth , $iheight, $icolor:'') {
+    width:$iwidth;
+    height:$iheight;
+    fill:$icolor;
+}

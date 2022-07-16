@@ -1,0 +1,23 @@
+<center><h1>{{object.fname}} {{object.lname}} خوش آمدید</h1>
+
+    <!DOCTYPE html>
+    <html>
+    <head>
+        <title>Todo List</title>
+    </head>
+    <body>
+        <form method="post" id="task-form">
+            {% csrf_token %}
+            {{form.talk_about}}
+            <button class="button" type="submit">جست و جو دکتر</button>
+            {% for i in darm %}
+            <p>{{i.fname}} {{i.lname}}</p>
+            <p>{{i.description}}</p>
+             <img src="{{i.pic.url}}" alt="" width="400" height="400">
+             <button class="button" type="submit">جست و جو دکتر</button>
+            {% endfor %}
+        </form>
+    </body>
+    </html>
+  </center>
+  </body>

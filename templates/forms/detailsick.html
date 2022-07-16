@@ -1,0 +1,28 @@
+{% extends 'base.html' %}
+{% block content %}
+
+
+        <!--.survey-desc-->
+        <form method="POST">
+            {% csrf_token %}
+            <div class="ms-tab">
+                <label class="form-label" for="req_name">1-نام و نام خانوادگی خود را وارد کنید:</label>
+            {{ form.talk_about }}
+                <button type="submit">submit</button>
+            </form>
+            <center>
+            <div class="s-page-title page-title custom-title">
+            {% for i in darm %}
+            <p>{{i.fname}} {{i.lname}}</p>
+            <p>{{i.description|truncatewords:30}}</p>
+                 <img src="{{i.pic.url}}" alt="" width="400" height="400"><br>
+                <a href="{% url 'form:details' i.slug deta.pk %}"> <button class="button1" type="submit" value="{{ i.id }}">جست و جو دکتر</button></a>
+                 {% endfor %}
+                <button type="submit"></button>
+        </div>
+            </center>
+            </div>
+            </div>
+        </div>
+        </form>
+{% endblock %}

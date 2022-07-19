@@ -1,4 +1,6 @@
 from webbrowser import get
+import math
+from numpy import append
 from .models import Choice_Model, darmangar, info, darmanjo_form
 from django.core.paginator import Paginator
 from django.shortcuts import render, HttpResponseRedirect, HttpResponse, get_object_or_404, get_list_or_404, redirect
@@ -8,6 +10,8 @@ from .forms import infoss, darmanjo_formss, darmanjo_F
 from .extentions.excel_validation import exel_reader
 import xlrd
 from django.utils.crypto import get_random_string
+
+from pypep.client import Pasargad
 
 
 class home(TemplateView):
@@ -98,9 +102,14 @@ def detailsick(request, slug):
     deta = get_object_or_404(info, slug=slug)
     darm = None
     page_obj = None
+    darms = []
     id = None
     darmangar_obje = None
     rel_info = None
+    count = None
+    index =0
+    d=[]
+    list_count =[]
     #form
     if request.method == "POST":
         form = darmanjo_formss(request.POST)
@@ -109,10 +118,61 @@ def detailsick(request, slug):
             talk_about = form.cleaned_data['talk_about']
             print("aa"+str(rel_info))
             darm = darmangar.objects.filter(keyword__in=talk_about.split())
-            print(darm)
+            count = darm.count()
+            half_count = math.ceil(count/2)
+            print(half_count)
+
+            for x in range(half_count):
+                list_count.append(x+1)
+
+            print(list_count)
+
+            j=0
+            for i in range(count):
+                print("i"+str(i))
+                if(j<=1):
+                   d.append(darm[i])
+                   if(j==1 or i==count-1):
+                      darms.append(d)
+                      j=0
+                      d=[]
+                   else:
+                     j += 1
+
+                
+                else:
+                    j=0
+
+                
+               
+            print(darms)
             pk = form.cleaned_data.get("pk")
             informations = darmanjo_form.objects.create(talk_about=talk_about,information=deta)
             form.save()
     else:
         form = darmanjo_formss()
-    return render(request, "forms/detailsick.html", {'deta':deta,'form':form,'darm':darm,'page_obj':page_obj})
+    return render(request, "forms/detailsick.html", {'deta':deta,'form':form,'darm':darm,'page_obj':page_obj, 'count':count,'darms':darms, 'list_count':list_count})
+
+def payment(request):
+    pasargad = Pasargad(4916435, 2148370, 'https://pep.co.ir/ipgtest', 'cert.xml')
+
+    payment_url = pasargad.redirect(
+        amount="15000",
+        invoice_number="1500011",
+        invoice_date="2021/08/23 15:51:00",
+
+        # mobile="091111", #optional
+        # email="test@test.local" #optional
+    )
+    return HttpResponseRedirect(payment_url)
+def check(request):
+
+    # Create an object from Pasargad client
+    # e.q: pasargad = Pasargad(123123,444444,"https://pep.co.ir/ipgtest","cert.xml")
+    pasargad = Pasargad(4916435, 2148370, 'https://pep.co.ir/ipgtest', 'cert.xml')
+
+    response = pasargad.check_transaction(
+        reference_id="6376533067940225092",
+        invoice_number="15001",
+        invoice_date="2021/08/23 15:51:00",
+    )

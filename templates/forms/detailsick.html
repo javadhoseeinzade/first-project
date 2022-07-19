@@ -1,28 +1,74 @@
 {% extends 'base.html' %}
+{% load crispy_forms_tags %}
 {% block content %}
 
 
         <!--.survey-desc-->
         <form method="POST">
             {% csrf_token %}
+            <div class="col-12">
             <div class="ms-tab">
                 <label class="form-label" for="req_name">1-نام و نام خانوادگی خود را وارد کنید:</label>
-            {{ form.talk_about }}
-                <button type="submit">submit</button>
+            {{ form.talk_about}}
+                <button type="submit"class="btn btn-primary btn-lg active" role="button" aria-pressed="true">ثبت</button>
             </form>
-            <center>
-            <div class="s-page-title page-title custom-title">
-            {% for i in darm %}
-            <p>{{i.fname}} {{i.lname}}</p>
-            <p>{{i.description|truncatewords:30}}</p>
-                 <img src="{{i.pic.url}}" alt="" width="400" height="400"><br>
-                <a href="{% url 'form:details' i.slug deta.pk %}"> <button class="button1" type="submit" value="{{ i.id }}">جست و جو دکتر</button></a>
-                 {% endfor %}
-                <button type="submit"></button>
-        </div>
-            </center>
             </div>
+        </div>
             </div>
         </div>
         </form>
+        <div class="bg-danger p-3">
+            <section class="mb-4">
+                <div class="container">
+                    <br><br><h4 class="text-left text-white">دکتر های جست و جو شده</h4><hr>
+                <div class="row">
+                    {% for i in darm %}
+                        {% comment %} {% for j in i %} {% endcomment %}
+                            <div class="col-6 darm" id="darm{{forloop.counter0}}" > 
+                                <div class="card mb-3" style="box-shadow: rgba(17, 12, 46, 0.15) 0px 48px 100px 0px; width: auto; height: auto; border-radius: 10px;">
+                            <div class="card-body">
+                                <img src="{{i.pic.url}}" class="card-img-top" alt="aa" style="width=auto; height:auto" >
+                                <h5 class="card-title mb-3">{{i.fname}} {{i.lname}}</h5>
+                                <p class="card-title mb-3 ">{{i.description|truncatewords:30}}</p>
+
+                                <a href="{% url 'form:details' i.slug deta.pk %}" class="btn btn-primary btn-lg active" role="button" aria-pressed="true">ادامه</a>
+                            </div>
+                            </div>
+                            </div>
+
+                        {% comment %} {% endfor %}         {% endcomment %}
+                {% endfor %} 
+             </div>
+             <div class="row">
+                {%for x in list_count%}
+                <div class="col-md-1">
+                    <button class="btn btn-success" name="pagination{{x}}" id="pagination{{x}}" onclick="next({{x}})">{{x}}</button>
+                </div>
+                    {%endfor%}
+            </div>
+              
+            </section>
+            <script>
+            
+                function none(){
+                $('.darm').css('display','none');
+                } 
+                none();   
+                 var i = 0;
+                for(i;i<=1;i++)
+                {
+                   $('#darm'+i).css('display','block');
+                    
+                }
+                function next(x)
+                {
+                    x=x-1;
+                    x=x*2;
+                    none();
+                    $('#darm'+x).css('display','block');
+                    $('#darm'+(x+1)).css('display','block');
+                }
+ 
+            </script>
+
 {% endblock %}

@@ -1,6 +1,5 @@
 from django.urls import path
-from .views import detailsick, home, get_name,detailview,Submit_Form, payment, check
-app_name = "form"
+from .views import detailsick, home, get_name,detailview,Submit_Form, payment
 
 urlpatterns = [
     path("home", home.as_view(), name="home"),
@@ -9,5 +8,4 @@ urlpatterns = [
     path("<slug:slug>/", detailsick, name="h"),
     path("b/<slug:slug>/<int:pk>", detailview.as_view(), name="details"),
     path("payment", payment, name="payment"),
-    path("m/", check, name="ch")
 ]

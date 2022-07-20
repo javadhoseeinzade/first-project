@@ -1,31 +1,21 @@
-from django.shortcuts import render
-from django.http import HttpResponse
-from django.shortcuts import redirect
-from zeep import Client
+from pypep import Pasargad
+from django.shortcuts import render, HttpResponseRedirect, HttpResponse, get_object_or_404, get_list_or_404, redirect
 
-MERCHANT = 'XXXXXXXX-XXXX-XXXX-XXXX-XXXXXXXXXXXX'
-client = Client('https://www.zarinpal.com/pg/services/WebGate/wsdl')
-amount = 1000  # Toman / Required
-description = "توضیحات مربوط به تراکنش را در این قسمت وارد کنید"  # Required
-email = 'email@example.com'  # Optional
-mobile = '09123456789'  # Optional
-CallbackURL = 'http://localhost:8000/verify/' # Important: need to edit for realy server.
+def check_transactions(request):
+    pasargad = Pasargad(4916435, 2148370, 'http://127.0.0.1:8000/check', 'cert.xml')
 
-def send_request(request):
-    result = client.service.PaymentRequest(MERCHANT, amount, description, email, mobile, CallbackURL)
-    if result.Status == 100:
-        return redirect('https://www.zarinpal.com/pg/StartPay/' + str(result.Authority))
-    else:
-        return HttpResponse('Error code: ' + str(result.Status))
+    response = pasargad.checkTransaction(
+        reference_id="637653306794022509",
+        invoice_number="15001",
+        invoice_date="2021/08/23 15:51:00",
+    )
 
-def verify(request):
-    if request.GET.get('Status') == 'OK':
-        result = client.service.PaymentVerification(MERCHANT, request.GET['Authority'], amount)
-        if result.Status == 100:
-            return HttpResponse('Transaction success.\nRefID: ' + str(result.RefID))
-        elif result.Status == 101:
-            return HttpResponse('Transaction submitted : ' + str(result.Status))
-        else:
-            return HttpResponse('Transaction failed.\nStatus: ' + str(result.Status))
-    else:
-        return HttpResponse('Transaction failed or canceled by user')
+    return render(request, "forms/b.html")
+
+def Verify_Payment(request):
+    pasargad = Pasargad(4916435, 2148370, 'http://127.0.0.1:8000/check', 'cert.xml')
+    response = pasargad.verifyPayment(
+        amount="15000",
+        invoice_number="15001",
+        invoice_date="2021/08/23 15:51:00",
+    )

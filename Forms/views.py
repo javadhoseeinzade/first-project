@@ -11,7 +11,7 @@ from .extentions.excel_validation import exel_reader
 import xlrd
 from django.utils.crypto import get_random_string
 
-from pypep.client import Pasargad
+from pypep import Pasargad
 
 
 class home(TemplateView):
@@ -154,25 +154,14 @@ def detailsick(request, slug):
     return render(request, "forms/detailsick.html", {'deta':deta,'form':form,'darm':darm,'page_obj':page_obj, 'count':count,'darms':darms, 'list_count':list_count})
 
 def payment(request):
-    pasargad = Pasargad(4916435, 2148370, 'https://pep.co.ir/ipgtest', 'cert.xml')
+    pasargad = Pasargad(4916435, 2148370, 'http://127.0.0.1:8000/checks', 'cert.xml')
 
     payment_url = pasargad.redirect(
         amount="15000",
-        invoice_number="1500011",
+        invoice_number="150001111",
         invoice_date="2021/08/23 15:51:00",
 
         # mobile="091111", #optional
         # email="test@test.local" #optional
     )
     return HttpResponseRedirect(payment_url)
-def check(request):
-
-    # Create an object from Pasargad client
-    # e.q: pasargad = Pasargad(123123,444444,"https://pep.co.ir/ipgtest","cert.xml")
-    pasargad = Pasargad(4916435, 2148370, 'https://pep.co.ir/ipgtest', 'cert.xml')
-
-    response = pasargad.check_transaction(
-        reference_id="6376533067940225092",
-        invoice_number="15001",
-        invoice_date="2021/08/23 15:51:00",
-    )

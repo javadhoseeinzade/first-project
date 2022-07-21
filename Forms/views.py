@@ -59,22 +59,12 @@ class Submit_Form(TemplateView):
 
 
 
-class detailview(DetailView, FormView):
+"""class detailview(DetailView, FormView):
     template_name = "forms/detailview.html"
     success_url = reverse_lazy('form:submit')
     form_class = darmanjo_formss
     
     
-    def get_queryset(self):
-        global detail
-        slug = self.kwargs.get("slug")
-        detail = get_object_or_404(darmangar, slug=slug)
-        return darmangar.objects.filter(slug=slug)
-
-    def get_context_data(self, **kwargs):
-        context =  super().get_context_data(**kwargs)
-        context["detail"] = detail
-        return context
 
 
     def get_queryset(self):
@@ -86,6 +76,17 @@ class detailview(DetailView, FormView):
     def get_context_data(self, **kwargs):
         context =  super().get_context_data(**kwargs)
         context["details"] = details
+        return context
+
+    def get_queryset(self):
+        global detailss
+        id = self.kwargs.get("id")
+        detailss = get_object_or_404(info, id=id)
+        return info.objects.filter(id=id)
+
+    def get_context_data(self, **kwargs):
+        context =  super().get_context_data(**kwargs)
+        context["detailss"] = detailss
         return context
     
 
@@ -101,9 +102,28 @@ class detailview(DetailView, FormView):
             )
 
         return super(detailview, self).form_valid(form)
+"""
+
+def detailform(request, slug, pk):
+    deta = info.objects.filter(slug=slug)
+
+    detas = get_object_or_404(info, slug=slug)
+    darman = get_object_or_404(darmangar, pk=pk)
+    if request.method == "POST":
+        form = darmanjo_formss(request.POST)
+        if form.is_valid():
+            rel_info = form.cleaned_data['rel_info']
+            informations = darmanjo_form.objects.create(talk_about=talk_about,rel_info=darman, information = detas)
+            form.save()
+
+    else:
+        form = darmanjo_formss()
+    return render(request, 'forms/detailform.html', {'deta':deta,'darman':darman, "form":form})
+
 #function form baraye form darmanjo
 def detailsick(request, slug):
     deta = get_object_or_404(info, slug=slug)
+    detas = info.objects.get(slug=slug)
     darm = None
     page_obj = None
     darms = []
@@ -119,6 +139,7 @@ def detailsick(request, slug):
         form = darmanjo_formss(request.POST)
         a = request.POST
         if form.is_valid():
+            global talk_about
             talk_about = form.cleaned_data['talk_about']
             print("aa"+str(rel_info))
             darm = darmangar.objects.filter(keyword__in=talk_about.split())
@@ -142,20 +163,15 @@ def detailsick(request, slug):
                       d=[]
                    else:
                      j += 1
-
-                
                 else:
                     j=0
-
-                
-               
             print(darms)
             pk = form.cleaned_data.get("pk")
             informations = darmanjo_form.objects.create(talk_about=talk_about,information=deta)
             form.save()
     else:
         form = darmanjo_formss()
-    return render(request, "forms/detailsick.html", {'deta':deta,'form':form,'darm':darm,'page_obj':page_obj, 'count':count,'darms':darms, 'list_count':list_count})
+    return render(request, "forms/detailsick.html", {'deta':deta,'detas':detas,'form':form,'darm':darm,'page_obj':page_obj, 'count':count,'darms':darms, 'list_count':list_count})
 
 def payment(request, slug, pk):
     global invoice_number
@@ -175,6 +191,8 @@ def payment(request, slug, pk):
     return HttpResponseRedirect(payment_url)
 
 
+
+
 def check_transactionss(request):
     pasargad = Pasargad(4916435, 2148370, 'http://127.0.0.1:8000/checks', 'cert.xml')
 
@@ -188,6 +206,8 @@ def check_transactionss(request):
     )
 
     return render(request, "forms/b.html")
+
+
 
 
 def Verify_Payments(request):

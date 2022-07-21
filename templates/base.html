@@ -27,47 +27,30 @@
     <script src="{% static 'assets/js/swiper-bundle.min.js' %}"></script>
 </head>
 <body>
+    <div class="bg-white sticky-top" style="opacity: 0.95; box-shadow: rgba(0, 0, 0, 0.1) 0px 20px 25px -5px, rgba(0, 0, 0, 0.04) 0px 10px 10px -5px;">
+        <nav class="navbar navbar-expand-lg navbar-light  bg-opacity-75 container" style="background-color: #ffffff;">
+          <a class="navbar-brand text-black" href=""><span class="text-danger">دکتر </span><span class="text-primary">لینک </span></a>
+          <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+          </button>
+      
+          <div class="collapse navbar-collapse" id="navbarSupportedContent">
+            <ul class="navbar-nav mx-3">
 
-    <div class="site-wrap survey-multi-page" id="site_wrap">
-    <header>
-        <div class="site-header ">
-            <div class="container">
-                <h1 class="site-logo">
-                    <a href="index.html">
-                        <span class="logo-first-part">دکتر</span>
-                        <span class="logo-last-part">لینک</span>
-                    </a>
-                </h1>
-                <nav>
-                    <ul class="top-menu">
-                        <li><a href="index.html">صفحه اصلی</a></li>
-                        <li><a href="about-product.html">معرفی محصول</a></li>
-                        <li><a href="support.html">درخواست مشاوره رایگان</a></li>
-                        <li><a href="blog.html">بلاگ</a></li>
-                        <li><a href="about-us.html">درباره ما</a></li>
-                        <li><a href="contact-us.html">ارتباط با ما</a></li>
-                    </ul>
-                </nav>
-                <a href="#" class="product-purchase-link" >مشاوره با ما</a>
-            </div>
-        </div>
-        <!--.site-header-->
+   
+              <li class="nav-item active">
+                <a class="nav-link mx-2 text-black" href="">ارتباط با ما</a>
+              </li>
+              <li class="nav-item active">
+                <a class="nav-link mx-2 text-black" href="">درباره ما</a>
+              </li>
 
-        <div class="mobile-header">
-            <div class="container">
-                <h1 class="mobile-header-logo">
-                    <a href="index.html">
-                        <span class="logo-first-part">دکتر</span>
-                        <span class="logo-last-part">لینک</span>
-                    </a>
-                </h1>
-                <span  class="menu-icon-res res-menu-control">
-                    <svg><use xlink:href="#menu"></use></svg>
-                </span>
-            </div>
-        </div>
-        <!-- .mobile-header -->
-    </header>
+      
+            </ul>
+
+          </div>
+        </nav>
+      </div>
     <!--header-->
     {% block content %}
 

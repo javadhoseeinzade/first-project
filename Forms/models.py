@@ -42,8 +42,7 @@ class darmanjo_form(models.Model):
     rel_info = models.ForeignKey(darmangar, on_delete=models.CASCADE,null=True, blank=True)
     payment = models.BooleanField(default=False)
     #picture = models.forignkey(darmangar, models/CASCADE)
-    def __str__(self):
-        return self.talk_about
+
 
 class Choice_Model(models.Model):
     choics = [

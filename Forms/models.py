@@ -12,6 +12,7 @@ class darmangar(models.Model):
     lname = models.CharField(max_length=100)
     description = models.TextField()
     pic = models.ImageField(upload_to="darmanger-image")
+    price = models.IntegerField(default=0)
 
 
     def __str__(self):

@@ -1,3 +1,4 @@
+from glob import glob
 from webbrowser import get
 import math
 from numpy import append
@@ -10,7 +11,7 @@ from .forms import infoss, darmanjo_formss, darmanjo_F
 from .extentions.excel_validation import exel_reader
 import xlrd
 from django.utils.crypto import get_random_string
-
+import random
 from pypep import Pasargad
 
 
@@ -56,10 +57,13 @@ def get_name(request):
 class Submit_Form(TemplateView):
     template_name = "forms/submit.html"
 
+
+
 class detailview(DetailView, FormView):
     template_name = "forms/detailview.html"
     success_url = reverse_lazy('form:submit')
     form_class = darmanjo_formss
+    
     
     def get_queryset(self):
         global detail
@@ -153,15 +157,43 @@ def detailsick(request, slug):
         form = darmanjo_formss()
     return render(request, "forms/detailsick.html", {'deta':deta,'form':form,'darm':darm,'page_obj':page_obj, 'count':count,'darms':darms, 'list_count':list_count})
 
-def payment(request):
-    pasargad = Pasargad(4916435, 2148370, 'http://127.0.0.1:8000/checks', 'cert.xml')
+def payment(request, slug, pk):
+    global invoice_number
+    payment_price = darmangar.objects.get(slug=slug)
+    amount = int(payment_price.price)
+    unique_payment = darmangar.objects.get(pk=pk)
+    pasargad = Pasargad(4916435, 2148370, 'http://127.0.0.1:8000/checkss', 'cert.xml')
 
     payment_url = pasargad.redirect(
-        amount="15000",
-        invoice_number="150001111",
+        amount=amount,
+        invoice_number=random.randint(0, 9000000),
         invoice_date="2021/08/23 15:51:00",
 
         # mobile="091111", #optional
         # email="test@test.local" #optional
     )
     return HttpResponseRedirect(payment_url)
+
+
+def check_transactionss(request):
+    pasargad = Pasargad(4916435, 2148370, 'http://127.0.0.1:8000/checks', 'cert.xml')
+
+    invoice_number = 1025477
+    invoice_number += 1
+    
+    response = pasargad.checkTransaction(
+        reference_id="tref",
+        invoice_number=invoice_number,
+        invoice_date="2021/08/23 15:51:00",
+    )
+
+    return render(request, "forms/b.html")
+
+
+def Verify_Payments(request):
+    pasargad = Pasargad(4916435, 2148370, 'http://127.0.0.1:8000/check', 'cert.xml')
+    response = pasargad.verifyPayment(
+        amount="15000",
+        invoice_number="15000111111111",
+        invoice_date="2021/08/23 15:51:00",
+    )

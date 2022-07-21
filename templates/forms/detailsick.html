@@ -31,7 +31,7 @@
                                 <h5 class="card-title mb-3">{{i.fname}} {{i.lname}}</h5>
                                 <p class="card-title mb-3 ">{{i.description|truncatewords:30}}</p>
 
-                                <a href="{% url 'form:details' i.slug deta.pk %}" class="btn btn-primary btn-lg active" role="button" aria-pressed="true">ادامه</a>
+                                <a href="{% url 'form:details' i.slug i.pk %}" class="btn btn-primary btn-lg active" role="button" aria-pressed="true">ادامه</a>
                             </div>
                             </div>
                             </div>

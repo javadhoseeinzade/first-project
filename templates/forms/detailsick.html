@@ -68,14 +68,15 @@
 
                         {% comment %} {% endfor %}         {% endcomment %}
                 {% endfor %} 
+                <div class="row">
+                   {%for x in list_count%}
+                   <div class="col-sm-1">
+                       <button class="btn btn-success" name="pagination{{x}}" id="pagination{{x}}" onclick="next({{x}})">{{x}}</button>
+                   </div>
+                       {%endfor%}
+               </div>
+
              </div>
-             <div class="row">
-                {%for x in list_count%}
-                <div class="col-md-1">
-                    <button class="btn btn-success" name="pagination{{x}}" id="pagination{{x}}" onclick="next({{x}})">{{x}}</button>
-                </div>
-                    {%endfor%}
-            </div>
               
             </section>
             <script>
@@ -97,6 +98,9 @@
                     none();
                     $('#darm'+x).css('display','block');
                     $('#darm'+(x+1)).css('display','block');
+                }
+                function nexts(y){
+                    y++
                 }
  
             </script>

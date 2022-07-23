@@ -59,6 +59,110 @@ class Submit_Form(TemplateView):
 
 
 
+
+
+def detailform(request, slug, pk):
+    deta = info.objects.filter(slug=slug)
+
+    detas = get_object_or_404(info, slug=slug)
+    darman = get_object_or_404(darmangar, pk=pk)
+    if request.method == "POST":
+        form = darmanjo_formss(request.POST)
+        if form.is_valid():
+            rel_info = form.cleaned_data['rel_info']
+            informations = darmanjo_form.objects.create(talk_about=talk_about,rel_info=darman, information = detas)
+            form.save()
+
+    else:
+        form = darmanjo_formss()
+    return render(request, 'forms/detailform.html', {'deta':deta,'darman':darman, "form":form})
+
+#function form baraye form darmanjo
+def detailsick(request, slug):
+    deta = get_object_or_404(info, slug=slug)
+    detas = info.objects.get(slug=slug)
+    darm = None
+    page_obj = None
+    darms = []
+    rel_info = None
+    list_count =[]
+    #form
+    if request.method == "POST":
+        form = darmanjo_formss(request.POST)
+        a = request.POST
+        if form.is_valid():
+            global talk_about
+            talk_about = form.cleaned_data['talk_about']
+            print("aa"+str(rel_info))
+            darm = darmangar.objects.filter(keyword__in=talk_about.split())
+            count = darm.count()
+            half_count = math.ceil(count/2)
+            print(half_count)
+
+            for x in range(half_count):
+                list_count.append(x+1)
+
+            print(list_count)
+            print(darms)
+            pk = form.cleaned_data.get("pk")
+            informations = darmanjo_form.objects.create(talk_about=talk_about,information=deta)
+            form.save()
+    else:
+        form = darmanjo_formss()
+    return render(request, "forms/detailsick.html", {'deta':deta,'detas':detas,'form':form,'darm':darm,'page_obj':page_obj,'darms':darms, 'list_count':list_count})
+
+def payment(request, slug, pk):
+    global invoice_number
+    payment_price = darmangar.objects.get(slug=slug)
+    amount = int(payment_price.price)
+    unique_payment = darmangar.objects.get(pk=pk)
+    pasargad = Pasargad(4916435, 2148370, 'http://127.0.0.1:8000/checkss', 'cert.xml')
+
+    payment_url = pasargad.redirect(
+        amount=amount,
+        invoice_number=random.randint(0, 9000000),
+        invoice_date="2021/08/23 15:51:00",
+
+        # mobile="091111", #optional
+        # email="test@test.local" #optional
+    )
+    return HttpResponseRedirect(payment_url)
+
+
+
+
+def check_transactionss(request):
+    pasargad = Pasargad(4916435, 2148370, 'http://127.0.0.1:8000/veryfypayments', 'cert.xml')
+
+    TransactionReferenceID = request.GET.get('refrence_id')
+    InvoiceNumber = request.GET.get('invoice_number')
+    InvoiceDate = request.GET.get('invoice_date')
+
+    response = pasargad.checkTransaction(
+        reference_id=TransactionReferenceID,
+        invoice_number=InvoiceNumber,
+        invoice_date=InvoiceDate,
+    )
+    return response
+
+
+
+def Verify_Payments(request):
+    pasargad = Pasargad(4916435, 2148370, 'http://127.0.0.1:8000/home', 'cert.xml')
+
+    amount = request.GET.get("amount")
+    InvoiceNumber = request.GET.get('invoice_number')
+    InvoiceDate = request.GET.get('invoice_date')
+    response = pasargad.verifyPayment(
+        amount=amount,
+        invoice_number=InvoiceNumber,
+        invoice_date=InvoiceDate,
+    )
+    return response
+
+
+
+
 """class detailview(DetailView, FormView):
     template_name = "forms/detailview.html"
     success_url = reverse_lazy('form:submit')
@@ -103,117 +207,3 @@ class Submit_Form(TemplateView):
 
         return super(detailview, self).form_valid(form)
 """
-
-def detailform(request, slug, pk):
-    deta = info.objects.filter(slug=slug)
-
-    detas = get_object_or_404(info, slug=slug)
-    darman = get_object_or_404(darmangar, pk=pk)
-    if request.method == "POST":
-        form = darmanjo_formss(request.POST)
-        if form.is_valid():
-            rel_info = form.cleaned_data['rel_info']
-            informations = darmanjo_form.objects.create(talk_about=talk_about,rel_info=darman, information = detas)
-            form.save()
-
-    else:
-        form = darmanjo_formss()
-    return render(request, 'forms/detailform.html', {'deta':deta,'darman':darman, "form":form})
-
-#function form baraye form darmanjo
-def detailsick(request, slug):
-    deta = get_object_or_404(info, slug=slug)
-    detas = info.objects.get(slug=slug)
-    darm = None
-    page_obj = None
-    darms = []
-    id = None
-    darmangar_obje = None
-    rel_info = None
-    count = None
-    index =0
-    d=[]
-    list_count =[]
-    #form
-    if request.method == "POST":
-        form = darmanjo_formss(request.POST)
-        a = request.POST
-        if form.is_valid():
-            global talk_about
-            talk_about = form.cleaned_data['talk_about']
-            print("aa"+str(rel_info))
-            darm = darmangar.objects.filter(keyword__in=talk_about.split())
-            count = darm.count()
-            half_count = math.ceil(count/2)
-            print(half_count)
-
-            for x in range(half_count):
-                list_count.append(x+1)
-
-            print(list_count)
-
-            j=0
-            for i in range(count):
-                print("i"+str(i))
-                if(j<=1):
-                   d.append(darm[i])
-                   if(j==1 or i==count-1):
-                      darms.append(d)
-                      j=0
-                      d=[]
-                   else:
-                     j += 1
-                else:
-                    j=0
-            print(darms)
-            pk = form.cleaned_data.get("pk")
-            informations = darmanjo_form.objects.create(talk_about=talk_about,information=deta)
-            form.save()
-    else:
-        form = darmanjo_formss()
-    return render(request, "forms/detailsick.html", {'deta':deta,'detas':detas,'form':form,'darm':darm,'page_obj':page_obj, 'count':count,'darms':darms, 'list_count':list_count})
-
-def payment(request, slug, pk):
-    global invoice_number
-    payment_price = darmangar.objects.get(slug=slug)
-    amount = int(payment_price.price)
-    unique_payment = darmangar.objects.get(pk=pk)
-    pasargad = Pasargad(4916435, 2148370, 'http://127.0.0.1:8000/checkss', 'cert.xml')
-
-    payment_url = pasargad.redirect(
-        amount=amount,
-        invoice_number=random.randint(0, 9000000),
-        invoice_date="2021/08/23 15:51:00",
-
-        # mobile="091111", #optional
-        # email="test@test.local" #optional
-    )
-    return HttpResponseRedirect(payment_url)
-
-
-
-
-def check_transactionss(request):
-    pasargad = Pasargad(4916435, 2148370, 'http://127.0.0.1:8000/checks', 'cert.xml')
-
-    invoice_number = 1025477
-    invoice_number += 1
-    
-    response = pasargad.checkTransaction(
-        reference_id="tref",
-        invoice_number=invoice_number,
-        invoice_date="2021/08/23 15:51:00",
-    )
-
-    return render(request, "forms/b.html")
-
-
-
-
-def Verify_Payments(request):
-    pasargad = Pasargad(4916435, 2148370, 'http://127.0.0.1:8000/check', 'cert.xml')
-    response = pasargad.verifyPayment(
-        amount="15000",
-        invoice_number="15000111111111",
-        invoice_date="2021/08/23 15:51:00",
-    )

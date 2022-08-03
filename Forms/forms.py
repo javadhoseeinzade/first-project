@@ -12,12 +12,8 @@ class infoss(ModelForm):
 class darmanjo_formss(ModelForm):
     class Meta:
         model = darmanjo_form
-        fields = ['talk_about', 'rel_info']
+        fields = ['talk_about','rel_info']
 
-class darmanjo_F(ModelForm):
-    class Meta:
-        model = darmangar
-        fields = ['keyword']
 
     #rel_info = forms.ModelMultipleChoiceField(
         #queryset=darmangar.objects.all(), widget=forms.CheckboxSelectMultiple)

@@ -5,6 +5,6 @@ admin.site.register(info)
 admin.site.register(UploadFile)
 admin.site.register(darmangar)
 class darmanjoform(admin.ModelAdmin):
-    list_display = ['talk_about', 'rel_info', 'information', 'payment']
+    list_display = ['id','talk_about', 'rel_info', 'information', 'payment']
 admin.site.register(darmanjo_form, darmanjoform)
 admin.site.register(Choice_Model)

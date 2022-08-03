@@ -11,8 +11,8 @@
 <p class="text-dark text-muted font-5">:توضیحات دکتر {{details.description}}</p><br><br>
 <form method="post" enctype="multipart/form-data">
     {% csrf_token %}
-    <input type="submit" class="btn btn-primary btn-lg active mb-3" role="button" aria-pressed="true" value="ثبت فرم">
-    <a href="{% url 'form:payment' details.slug details.pk %}">aaa</a>
+    <a href="{% url 'form:payment' details.slug details.pk %}"><input type="submit" class="btn btn-primary btn-lg active mb-3" role="button" aria-pressed="true" value="ثبت فرم">
+    </a>
 </form>
 </div>
 </div>

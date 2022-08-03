@@ -2,8 +2,8 @@ from django.urls import path
 from .views import (detailsick,
  home, get_name,
 Submit_Form
- , payment,check_transactionss,
- Verify_Payments, detailform
+ , payment,check_transaction,
+ detailform
 )
 app_name = "form"
 
@@ -15,7 +15,6 @@ urlpatterns = [
     #path("<int:pk>/<slug:slug>", detailview.as_view(), name="details"),
     path("c/<int:pk>/<slug:slug>", detailform, name="detailss"),
     path("payment<slug:slug>/<int:pk>", payment, name="payment"),
-    path("checkss", check_transactionss,),
-    path("veryfypayments", Verify_Payments,)
+    path("checkss", check_transaction,name="checks"),
 
 ]

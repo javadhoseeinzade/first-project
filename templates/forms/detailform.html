@@ -11,7 +11,7 @@
 <p class="text-dark text-muted font-5">:توضیحات دکتر {{darman.description}}</p><br><br>
 <form method="post" enctype="multipart/form-data">
     {% csrf_token %}
-    <a href="{% url 'form:payment' darman.slug darman.pk %}"target="_blank">aaa
+    <a href="{% url 'form:payment' darman.slug detass.pk detass.fname %}"target="_blank">aaa
     </a>
     <input type="submit" class="btn btn-primary btn-lg active mb-3" role="button" aria-pressed="true" value="ثبت فرم">
 </form>

@@ -82,6 +82,7 @@ def detailsick(request, slug):
         if form.is_valid():
             global talk_about
             talk_about = form.cleaned_data['talk_about']
+            form.save(commit=False)
             print("aa"+str(rel_info))
             darm = darmangar.objects.filter(keyword__in=talk_about.split())
             count = darm.count()
@@ -93,9 +94,7 @@ def detailsick(request, slug):
 
             print(list_count)
             print(darms)
-            pk = form.cleaned_data.get("pk")
-            #informations = darmanjo_form.objects.create(talk_about=talk_about,information=deta)
-            form.save()
+            informations = darmanjo_form.objects.create(information=deta, talk_about=talk_about)
     else:
         form = darmanjo_formss()
     return render(request, "forms/detailsick.html", {'deta':deta,'detas':detas,'form':form,'darm':darm,'page_obj':page_obj,'darms':darms, 'list_count':list_count})
@@ -103,39 +102,40 @@ def detailsick(request, slug):
 #detail form
 def detailform(request, slug, pk):
     #for url filter
+    
+    fname = None
+    lname = None
     deta = info.objects.filter(slug=slug)
+    deta1 = info.objects.get(slug=slug)
+    m = 1599
+    b = m+1
+
     darman = get_object_or_404(darmangar, pk=pk)
 
-
     detass = info.objects.get(slug=slug)
-    a = info.objects.get(slug=slug)
-    if request.method == "POST":
-        form = darmanjo_formss(request.POST)
-        if form.is_valid():
-            a =darmanjo_form.objects.latest('id').id
-            #informations = darmanjo_form.objects.update(talk_about=detas,rel_info=darman, information = detas)
-            informations = darmanjo_form.objects.filter(id=a).update(rel_info=darman, information=detass)
-            b =darmanjo_form.objects.delete()
-            form.save()
-    else:
-        form = darmanjo_formss()
-    return render(request, 'forms/detailform.html', {'deta':deta,'darman':darman, "form":form})
-
-
-
-
+    c = info.objects.get(slug=slug)
+    #informations = darmanjo_form.objects.update(talk_about=detas,rel_info=darman, information = detas)
+    informations = darmanjo_form.objects.filter(information__fname__icontains=deta1.fname, information__lname__icontains=deta1.lname, payment=False).update(rel_info=darman, information=detass)
+ 
+    return render(request, 'forms/detailform.html', {'deta':deta,'darman':darman,'detass':detass})
 
 
 #payment
-def payment(request, slug, pk):
+def payment(request, slug, pk, fname, lname):
     if request.method == "GET":
         date = datetime.datetime.now()
         global invoice_number
         payment_price = darmangar.objects.get(slug=slug)
         global amount
         amount = int(payment_price.price)
+        deta = info.objects.get(fname=fname)
+        print(deta.fname)
+        deta1 = darmangar.objects.get(fname=fname)
+        print(payment_price)
+        #quer = darmanjo_form.objects.filter(rel_into__contain=payment_price,information__contain=deta)
+        #informations = darmanjo_form.objects.filter(rel_info__fname__icontains=payment_price.fname,rel_info__lname__icontains=payment_price.lname, information__fname__icontains=deta.fname, information__lname__icontains=deta.lname).update(payment=True)
         unique_payment = darmangar.objects.get(pk=pk)
-        pasargad = Pasargad(4916435, 2148370, 'http://127.0.0.1:8000/checkss', 'cert.xml')
+        pasargad = Pasargad(4916435, 2148370, 'http://127.0.0.1:8000/checkss/', 'cert.xml')
 
         payment_url = pasargad.redirect(
             amount=amount,
@@ -144,7 +144,14 @@ def payment(request, slug, pk):
         )
         return HttpResponseRedirect(payment_url, pasargad)
 
-def check_transaction(request):
+def check_transaction(request,fname,slug):
+    payment_price = darmangar.objects.get(slug=slug)
+    global amount
+    amount = int(payment_price.price)
+    deta = info.objects.get(fname=fname)
+    print(deta.fname)
+    deta1 = darmangar.objects.get(fname=fname)
+    print(payment_price)
     pasargad = Pasargad(4916435, 2148370, 'http://127.0.0.1:8000/home', 'cert.xml')
     response = pasargad.check_transaction(
         reference_id=request.GET['tref'],
@@ -159,6 +166,7 @@ def check_transaction(request):
 
 
     if request.method == 'GET':
+        informations = darmanjo_form.objects.filter(rel_info__fname__icontains=payment_price.fname,rel_info__lname__icontains=payment_price.lname, information__fname__icontains=deta.fname, information__lname__icontains=deta.lname).update(payment=True)
         InvoiceNumber = request.GET.get('iN')
         InvoiceDate = request.GET.get('iD')
         response = pasargad.verify_payment(

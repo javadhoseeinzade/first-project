@@ -14,7 +14,7 @@ urlpatterns = [
     path("<slug:slug>/", detailsick, name="h"),
     #path("<int:pk>/<slug:slug>", detailview.as_view(), name="details"),
     path("c/<int:pk>/<slug:slug>", detailform, name="detailss"),
-    path("payment<slug:slug>/<int:pk>", payment, name="payment"),
-    path("checkss", check_transaction,name="checks"),
+    path("payment/<slug:slug>/<int:pk>/<str:fname>", payment, name="payment"),
+    path("checkss/", check_transaction,name="checks"),
 
 ]

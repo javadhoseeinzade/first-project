@@ -1,9 +1,4 @@
-from genericpath import exists
-from glob import glob
 import json
-from turtle import update
-from unittest import result
-from webbrowser import get
 import math
 from wsgiref import headers
 from xml.dom import ValidationErr
@@ -71,6 +66,7 @@ def detailsick(request, slug):
     deta = get_object_or_404(info, slug=slug)
     detas = info.objects.get(slug=slug)
     darm = None
+    informations = None
     page_obj = None
     darms = []
     rel_info = None
@@ -97,32 +93,28 @@ def detailsick(request, slug):
             informations = darmanjo_form.objects.create(information=deta, talk_about=talk_about)
     else:
         form = darmanjo_formss()
-    return render(request, "forms/detailsick.html", {'deta':deta,'detas':detas,'form':form,'darm':darm,'page_obj':page_obj,'darms':darms, 'list_count':list_count})
+    return render(request, "forms/detailsick.html", {'deta':deta,'detas':detas,'form':form,'darm':darm,'page_obj':page_obj,'darms':darms, 'list_count':list_count, 'informations':informations})
 
 #detail form
-def detailform(request, slug, pk):
+def detailform(request, slug, pk, id):
     #for url filter
-    
+    darmanjo_fo = darmanjo_form.objects.get(id=id)
     fname = None
     lname = None
     deta = info.objects.filter(slug=slug)
     deta1 = info.objects.get(slug=slug)
-    m = 1599
-    b = m+1
-
     darman = get_object_or_404(darmangar, pk=pk)
-
     detass = info.objects.get(slug=slug)
     c = info.objects.get(slug=slug)
     #informations = darmanjo_form.objects.update(talk_about=detas,rel_info=darman, information = detas)
-    informations = darmanjo_form.objects.filter(information__fname__icontains=deta1.fname, information__lname__icontains=deta1.lname, payment=False).update(rel_info=darman, information=detass)
+    informations = darmanjo_form.objects.filter(information__fname__icontains=deta1.fname, information__lname__icontains=deta1.lname,id=darmanjo_fo.id).update(rel_info=darman, information=detass)
  
-    return render(request, 'forms/detailform.html', {'deta':deta,'darman':darman,'detass':detass})
-
+    return render(request, 'forms/detailform.html', {'deta':deta,'darman':darman,'detass':detass,'darmanjo_fo':darmanjo_fo})
 
 #payment
-def payment(request, slug, pk, fname, lname):
+def payment(request, slug, pk, fname,id):
     if request.method == "GET":
+        darmanjo_fo = darmanjo_form.objects.get(id=id)
         date = datetime.datetime.now()
         global invoice_number
         payment_price = darmangar.objects.get(slug=slug)
@@ -135,7 +127,7 @@ def payment(request, slug, pk, fname, lname):
         #quer = darmanjo_form.objects.filter(rel_into__contain=payment_price,information__contain=deta)
         #informations = darmanjo_form.objects.filter(rel_info__fname__icontains=payment_price.fname,rel_info__lname__icontains=payment_price.lname, information__fname__icontains=deta.fname, information__lname__icontains=deta.lname).update(payment=True)
         unique_payment = darmangar.objects.get(pk=pk)
-        pasargad = Pasargad(4916435, 2148370, 'http://127.0.0.1:8000/checkss/', 'cert.xml')
+        pasargad = Pasargad(4916435, 2148370, f'http://127.0.0.1:8000/checkss/{payment_price.slug}/{deta.pk}/{deta.fname}/{darmanjo_fo.id}/', 'cert.xml')
 
         payment_url = pasargad.redirect(
             amount=amount,
@@ -144,14 +136,16 @@ def payment(request, slug, pk, fname, lname):
         )
         return HttpResponseRedirect(payment_url, pasargad)
 
-def check_transaction(request,fname,slug):
+def check_transaction(request,fname,slug,id,pk):
     payment_price = darmangar.objects.get(slug=slug)
+    darmanjo_fo = darmanjo_form.objects.get(id=id)
     global amount
     amount = int(payment_price.price)
     deta = info.objects.get(fname=fname)
     print(deta.fname)
     deta1 = darmangar.objects.get(fname=fname)
     print(payment_price)
+    unique_payment = darmangar.objects.get(pk=pk)
     pasargad = Pasargad(4916435, 2148370, 'http://127.0.0.1:8000/home', 'cert.xml')
     response = pasargad.check_transaction(
         reference_id=request.GET['tref'],

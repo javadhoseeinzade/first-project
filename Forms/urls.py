@@ -13,8 +13,8 @@ urlpatterns = [
     path("fomes", get_name, name="formviews"),
     path("<slug:slug>/", detailsick, name="h"),
     #path("<int:pk>/<slug:slug>", detailview.as_view(), name="details"),
-    path("c/<int:pk>/<slug:slug>", detailform, name="detailss"),
-    path("payment/<slug:slug>/<int:pk>/<str:fname>", payment, name="payment"),
-    path("checkss/", check_transaction,name="checks"),
+    path("c/<int:pk>/<slug:slug>/<int:id>", detailform, name="detailss"),
+    path("payment/<slug:slug>/<int:pk>/<str:fname>/<int:id>", payment, name="payment"),
+    path("checkss/<slug:slug>/<int:pk>/<str:fname>/<int:id>/", check_transaction,name="checks"),
 
 ]

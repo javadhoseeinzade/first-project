@@ -1,3 +1,4 @@
+from audioop import reverse
 import json
 import math
 from wsgiref import headers
@@ -5,6 +6,7 @@ from xml.dom import ValidationErr
 from numpy import append
 from .models import Choice_Model, darmangar, info, darmanjo_form
 from django.core.paginator import Paginator
+from django.urls import reverse
 from django.shortcuts import render, HttpResponseRedirect, HttpResponse, get_object_or_404, get_list_or_404, redirect
 from django.urls import reverse_lazy
 from django.views.generic import TemplateView, CreateView,FormView, DetailView
@@ -13,7 +15,8 @@ from .extentions.excel_validation import exel_reader
 import xlrd
 from django.utils.crypto import get_random_string
 import random
-from pypep import Pasargad
+from pypep import Pasargad, ApiError
+
 import datetime
 
 class home(TemplateView):
@@ -111,42 +114,95 @@ def detailform(request, slug, pk, id):
  
     return render(request, 'forms/detailform.html', {'deta':deta,'darman':darman,'detass':detass,'darmanjo_fo':darmanjo_fo})
 
+
+class Unsubmit_Payment(TemplateView):
+    template_name = "forms/Unsubmit.html"
+
 #payment
-def payment(request, slug, pk, fname,id):
-    if request.method == "GET":
-        darmanjo_fo = darmanjo_form.objects.get(id=id)
-        date = datetime.datetime.now()
-        global invoice_number
-        payment_price = darmangar.objects.get(slug=slug)
-        global amount
-        amount = int(payment_price.price)
-        deta = info.objects.get(fname=fname)
-        print(deta.fname)
-        deta1 = darmangar.objects.get(fname=fname)
-        print(payment_price)
-        #quer = darmanjo_form.objects.filter(rel_into__contain=payment_price,information__contain=deta)
-        #informations = darmanjo_form.objects.filter(rel_info__fname__icontains=payment_price.fname,rel_info__lname__icontains=payment_price.lname, information__fname__icontains=deta.fname, information__lname__icontains=deta.lname).update(payment=True)
-        unique_payment = darmangar.objects.get(pk=pk)
-        pasargad = Pasargad(4916435, 2148370, f'http://127.0.0.1:8000/checkss/{payment_price.slug}/{deta.pk}/{deta.fname}/{darmanjo_fo.id}/', 'cert.xml')
+def payment(request, slug,id):
 
-        payment_url = pasargad.redirect(
-            amount=amount,
-            invoice_number=random.randint(0, 9000000),
-            invoice_date=str(date),
-        )
-        return HttpResponseRedirect(payment_url, pasargad)
+    darmanjo_fo = darmanjo_form.objects.get(id=id)
+    date = datetime.datetime.now()
+    global invoice_number
+    payment_price = darmangar.objects.get(slug=slug)
+    global amount
+    amount = int(payment_price.price)
+    print(payment_price)
+    url = f'http://127.0.0.1:8000/checkss/{payment_price.slug}/{darmanjo_fo.id}/'
+    pasargad = Pasargad(4916435, 2148370, url, 'cert.xml')
+    payment_url = pasargad.redirect(
+        amount=amount,
+        invoice_number=random.randint(0, 9000000),
+        invoice_date=str(date),
+    )
+    url = 'http://127.0.0.1:8000/checkss/{payment_price.slug}/{darmanjo_fo.id}/'
+    return HttpResponseRedirect(payment_url, url)
 
-def check_transaction(request,fname,slug,id,pk):
+def check_transaction(request,slug,id):
     payment_price = darmangar.objects.get(slug=slug)
     darmanjo_fo = darmanjo_form.objects.get(id=id)
     global amount
     amount = int(payment_price.price)
-    deta = info.objects.get(fname=fname)
-    print(deta.fname)
-    deta1 = darmangar.objects.get(fname=fname)
     print(payment_price)
-    unique_payment = darmangar.objects.get(pk=pk)
     pasargad = Pasargad(4916435, 2148370, 'http://127.0.0.1:8000/home', 'cert.xml')
+    print("okey")
+    TransactionReferenceID = request.GET.get('tref')
+    InvoiceNumber = request.GET.get('iN')
+    InvoiceDate = request.GET.get('iD')
+    print(TransactionReferenceID)
+    print(InvoiceNumber)
+    print(InvoiceDate)
+    try:
+        response = pasargad.check_transaction(
+            reference_id=TransactionReferenceID,
+            invoice_number=InvoiceNumber,
+            invoice_date=InvoiceDate,
+        )
+        
+        with open('data.txt', 'a') as f:
+            data = json.dumps(response)
+            data1 = str(data)
+            f.write(data1+"\n")
+            print("okey")
+        InvoiceNumber = request.GET.get('iN')
+        InvoiceDate = request.GET.get('iD')
+        response = pasargad.verify_payment(
+            amount=amount,
+            invoice_number=InvoiceNumber,
+            invoice_date=InvoiceDate,
+        )
+        informations = darmanjo_form.objects.filter(id=darmanjo_fo.id).update(payment=True)
+        print("sabt shod")
+    #informations = darmanjo_form.objects.create()
+        return HttpResponseRedirect(reverse('form:home'))
+    except Exception:
+        return HttpResponseRedirect(reverse('form:Unsubmit'))
+
+
+        #response = json.loads(response.read().decode('utf-8'))
+
+
+#f'http://127.0.0.1:8000/checkss/{payment_price.slug}/{darmanjo_fo.id}/'
+#f'http://127.0.0.1:8000/checkss/{payment_price.slug}/{deta.pk}/{deta.fname}/{darmanjo_fo.id}/'
+
+
+"""
+        if request.method == 'GET':
+            informations = darmanjo_form.objects.filter(id=darmanjo_fo.id).update(payment=True)
+            InvoiceNumber = request.GET.get('iN')
+            InvoiceDate = request.GET.get('iD')
+            response = pasargad.verify_payment(
+                amount=amount,
+                invoice_number=InvoiceNumber,
+                invoice_date=InvoiceDate,
+            )
+            #informations = darmanjo_form.objects.create()
+            return HttpResponse("okey")
+    except Exception:
+        return HttpResponse("okey")
+"""
+"""
+    pasargad = Pasargad(4916435, 2148370, f'http://127.0.0.1:8000/home', 'cert.xml')
     response = pasargad.check_transaction(
         reference_id=request.GET['tref'],
         invoice_number=request.GET['iN'],
@@ -157,16 +213,23 @@ def check_transaction(request,fname,slug,id,pk):
         data1 = str(data)
         f.write(data1+"\n")
     
+    data = json.dumps(response)
+    print(data)
+    x = data.get("IsSuccess")
+    print("<-------------------------->  "+x)
+    if x == "True":
+        if request.method == 'GET':
+            informations = darmanjo_form.objects.filter(information__fname__icontains=deta1.fname, information__lname__icontains=deta1.lname,id=darmanjo_fo.id).update(payment=True)
+            InvoiceNumber = request.GET.get('iN')
+            InvoiceDate = request.GET.get('iD')
+            response = pasargad.verify_payment(
+                amount="17000",
+                invoice_number=InvoiceNumber,
+                invoice_date=InvoiceDate,
+            )
+            #informations = darmanjo_form.objects.create()
+            return HttpResponse("okey")
+    else:
+        return HttpResponse("False")
 
-
-    if request.method == 'GET':
-        informations = darmanjo_form.objects.filter(rel_info__fname__icontains=payment_price.fname,rel_info__lname__icontains=payment_price.lname, information__fname__icontains=deta.fname, information__lname__icontains=deta.lname).update(payment=True)
-        InvoiceNumber = request.GET.get('iN')
-        InvoiceDate = request.GET.get('iD')
-        response = pasargad.verify_payment(
-            amount="17000",
-            invoice_number=InvoiceNumber,
-            invoice_date=InvoiceDate,
-        )
-        #informations = darmanjo_form.objects.create()
-        return HttpResponse("okey")
+"""

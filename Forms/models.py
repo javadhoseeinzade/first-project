@@ -19,17 +19,14 @@ class darmangar(models.Model):
         return self.fname + " " + self.lname 
 
 class info(models.Model):
-    fname = models.CharField(max_length=100)
-    lname = models.CharField(max_length=100)
-    mobile = models.CharField(max_length=100)
-    email = models.EmailField()
+    fname = models.CharField(max_length=100, blank=False)
+    lname = models.CharField(max_length=100, blank=False)
+    mobile = models.IntegerField()
+    email = models.EmailField(blank=False)
     slug = models.CharField(max_length=20, unique=True, null=True)
-
-    talk_about = models.TextField()
-    rel_info = models.ForeignKey(darmangar, on_delete=models.CASCADE)
     
     def __str__(self):
-        return self.fname + " " + self.lname
+        return str(self.id)
 
 class UploadFile(models.Model):
     upl = models.FileField(upload_to="upload-file")

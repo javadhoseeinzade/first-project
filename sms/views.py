@@ -51,13 +51,18 @@ def send_sms(request):
                 print(i)
             for b in recievers:
                 c = "0" + str(b)
+            with open('numbers.txt', 'a') as f:
+                data =(recievers)
+                data1 = str(data)
+                f.write(data1+"\n")
+                print("okey")
             for v in fnam:
                 print(v)
             params = {
                 'receptor': c,
-                'template': 'VerifyRegistrationWeb',
-                'token': v,
-                'token2': "http://127.0.0.1:8000/" + i,
+                'template': 'WelcomePsychlogiest',
+                'token': "درمانگر",
+                'token2': "www2.drlink.ir/support",
                 'type': 'sms',#sms vs call
             }
             recievers.popleft()

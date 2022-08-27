@@ -16,7 +16,7 @@ import xlrd
 from django.utils.crypto import get_random_string
 import random
 from pypep import Pasargad, ApiError
-
+import pandas as pd
 import datetime
 
 class home(TemplateView):
@@ -31,22 +31,22 @@ def get_name(request):
         if form.is_valid():
             upl = form.cleaned_data['upl']
             form.save()
-            print(upl)
-            wb = xlrd.open_workbook("upload-file/" + str(upl))
+
+            wb = xlrd.open_workbook("media/upload-file/" + str(upl))
             sh = wb.sheet_by_index(0)
             columns = sh.ncols - 2
-            print(columns)
+            num_rows = sh.nrows - 1
+            print(num_rows)
             if sh.cell_value(0,0) == "نام" and sh.cell_value(0,1) == "خانوادگی" and sh.cell_value(0,2) == "موبایل" and sh.cell_value(0,3) == "ایمیل":
-                for i in range(columns):
+                for i in range(num_rows):
                     the_slug = get_random_string(3,'0123456789') # 8 characters, only digits. 
                     the_slugs = get_random_string(3,'0123456789')
                     m = str(the_slug) + "-" + str(the_slug)
                     o = i + 1
-                    b =  sh.cell_value(o,0)
-                    c =  sh.cell_value(o,1)
+
                     d =  sh.cell_value(o,2)
-                    e = sh.cell_value(o,3)
-                    a = info.objects.create(fname=b, lname=c, mobile=d, email=e ,slug=m)
+
+                    a = info.objects.create( mobile=d)
                 return HttpResponse("فایل با موفقیت ثبت شد")
             else:
                 return HttpResponse("مشکلی در فایل وجود دارد احتمالا از قوانین فایل پیروی نکردید")
